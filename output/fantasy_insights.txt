@@ -1,4 +1,9 @@
 ESPN Fantasy Baseball - Insights and Recommendations
-Generated: 2025-03-22 06:25:02
+Generated: 2025-03-22 06:34:58
 League: Nike Fantasy Baseball
+
+Available Statistics
+-------------------
+- 0_points
+- 0_projected_points
 
