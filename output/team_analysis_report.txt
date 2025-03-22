@@ -1,0 +1,42 @@
+ESPN Fantasy Baseball - Team Analysis Report
+Generated: 2025-03-21 21:18:45
+League: Nike Fantasy Baseball
+
+League Standings
+---------------
+               name        owner_name  standing  wins  losses  win_percentage
+        Texas Tetas        j4ckbr0z3k         1     0       0               0
+     Boston Bandits        Fbennett24         2     0       0               0
+          Sho-Girls   ESPNFAN12605214         3     0       0               0
+Mr. Met's Monastery ESPNFAN7557715690         4     0       0               0
+    DoobieDoobieDoo  Prashant Periwal         5     0       0               0
+           Yunoewut ESPNFAN6217466223         6     0       0               0
+         Trashstros        Sandersen_         7     0       0               0
+           Gigantes ESPNFAN9314286712         8     0       0               0
+   Jose Can You See         djyoung57         9     0       0               0
+        Sultan Slam    saraswat842003        10     0       0               0
+  Josh's Scary Team      TheMakepeace        11     0       0               0
+Mr. Steele Yo' Base            dgood9        12     0       0               0
+
+Division Standings
+-----------------
+Swoosh
+               name        owner_name  standing  wins  losses  win_percentage
+        Texas Tetas        j4ckbr0z3k         1     0       0               0
+     Boston Bandits        Fbennett24         2     0       0               0
+          Sho-Girls   ESPNFAN12605214         3     0       0               0
+Mr. Met's Monastery ESPNFAN7557715690         4     0       0               0
+    DoobieDoobieDoo  Prashant Periwal         5     0       0               0
+           Yunoewut ESPNFAN6217466223         6     0       0               0
+         Trashstros        Sandersen_         7     0       0               0
+           Gigantes ESPNFAN9314286712         8     0       0               0
+   Jose Can You See         djyoung57         9     0       0               0
+        Sultan Slam    saraswat842003        10     0       0               0
+  Josh's Scary Team      TheMakepeace        11     0       0               0
+Mr. Steele Yo' Base            dgood9        12     0       0               0
+
+Visualization Files
+------------------
+Standings chart: standings.png
+Win percentage chart: win_percentage.png
+Division comparison chart: division_comparison.png

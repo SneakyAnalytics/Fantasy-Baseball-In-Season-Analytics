@@ -1,0 +1,30 @@
+ESPN Fantasy Baseball - Player Analysis Report
+Generated: 2025-03-21 21:41:08
+League: Nike Fantasy Baseball
+
+Available Statistics
+-------------------
+- 0_points
+- 0_projected_points
+
+Players at Position: SP
+========================================
+
+Total players: 83
+
+Top Performers
+-------------
+Top 5 by 0_points:
+  - Yoshinobu Yamamoto (LAD): 15.0
+  - Shohei Ohtani (LAD): 12.0
+  - Shota Imanaga (ChC): 10.0
+  - Roki Sasaki (LAD): 4.0
+  - Bowden Francis (Tor): 0.0
+
+Top 5 by 0_projected_points:
+  - Tarik Skubal (Det): 513.0
+  - Shohei Ohtani (LAD): 509.0
+  - Zack Wheeler (Phi): 485.0
+  - Paul Skenes (Pit): 464.0
+  - Logan Gilbert (Sea): 463.0
+
