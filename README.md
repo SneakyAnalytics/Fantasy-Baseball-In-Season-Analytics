@@ -96,6 +96,23 @@ python scripts/fantasy_insights.py --projections --position-filter "SP"
 Find potential waiver wire targets:
 python scripts/fantasy_insights.py --waiver
 
+## Advanced Player Analysis
+
+Analyze player trends using advanced Statcast metrics:
+```
+python scripts/player_trends.py
+```
+
+Analyze a specific player's advanced metrics:
+```
+python scripts/player_trends.py --player "Juan Soto"
+```
+
+Find trending batters only:
+```
+python scripts/player_trends.py --player-type batter
+```
+
 # Matchup Analysis & Reporting Features
 
 ## New Features

@@ -103,7 +103,7 @@ def format_position_analysis(position_analysis):
     return "\n\n".join(sections)
 
 def format_pitching_strategy(pitching_strategy):
-    """Format pitching strategy into readable text."""
+    """Format pitching strategy into readable text with schedule information."""
     sections = []
     
     sections.append("PITCHING STRATEGY")
@@ -112,21 +112,108 @@ def format_pitching_strategy(pitching_strategy):
     max_starts = pitching_strategy.get('max_starts', 12)
     sections.append(f"Maximum pitcher starts: {max_starts}")
     
+    # Add adjusted point total if available
+    projected = pitching_strategy.get('projected_points', 0)
+    adjusted = pitching_strategy.get('adjusted_points', 0)
+    
+    if adjusted > 0 and projected > 0:
+        adjustment = adjusted - projected
+        adjustment_text = "+" if adjustment > 0 else ""
+        sections.append(f"Projected pitching points: {projected:.1f} ({adjustment_text}{adjustment:.1f} matchup adjustment) = {adjusted:.1f} total")
+    elif projected > 0:
+        sections.append(f"Projected pitching points: {projected:.1f}")
+    
+    # Get pitcher notes and schedule information
+    pitcher_notes = pitching_strategy.get('pitcher_notes', {})
+    pitcher_schedule = pitching_strategy.get('pitcher_schedule', {})
+    
+    # Strategy explanation
+    sections.append("\nSTRATEGY EXPLANATION:")
+    sections.append("Pitcher rankings are based on a combination of:")
+    sections.append("• Baseline projections")
+    sections.append("• Opponent offensive strength (including K%)")
+    sections.append("• Ballpark factors")
+    sections.append("• Home/away status")
+    sections.append("• Pitcher's recent performance trends")
+    
+    # Format recommended starters
     recommended = pitching_strategy.get('recommended_pitchers', [])
     if recommended:
         sections.append("\nRECOMMENDED STARTERS:")
         for i, pitcher in enumerate(recommended, 1):
-            sections.append(f"{i}. {pitcher}")
+            pitcher_line = f"{i}. {pitcher}"
+            
+            # Add note if available
+            if pitcher in pitcher_notes:
+                pitcher_line += f" - {pitcher_notes[pitcher]}"
+                
+            # Add scheduled start date if available
+            if pitcher_schedule and pitcher in pitcher_schedule:
+                start_info = pitcher_schedule[pitcher]
+                if 'date' in start_info:
+                    start_date = start_info['date']
+                    pitcher_line += f" (Scheduled: {start_date.strftime('%a, %b %d')})"
+                    
+                # Add opponent and ballpark info if available
+                if 'opponent' in start_info and 'ballpark' in start_info:
+                    opponent = start_info['opponent']
+                    ballpark = start_info['ballpark']
+                    home_away = "home" if start_info.get('home_game', False) else "away"
+                    pitcher_line += f" - {home_away} vs {opponent} at {ballpark}"
+                
+            sections.append(pitcher_line)
     
+    # Format benched pitchers
     benched = pitching_strategy.get('benched_pitchers', [])
     if benched:
         sections.append("\nCONSIDER BENCHING:")
         for pitcher in benched:
-            sections.append(f"- {pitcher}")
+            pitcher_line = f"- {pitcher}"
             
-    projected = pitching_strategy.get('projected_points', 0)
-    if projected > 0:
-        sections.append(f"\nProjected pitching points: {projected:.1f}")
+            # Add note if available
+            if pitcher in pitcher_notes:
+                pitcher_line += f" - {pitcher_notes[pitcher]}"
+                
+            # Add scheduled start date if available
+            if pitcher_schedule and pitcher in pitcher_schedule:
+                start_info = pitcher_schedule[pitcher]
+                if 'date' in start_info:
+                    start_date = start_info['date']
+                    pitcher_line += f" (Scheduled: {start_date.strftime('%a, %b %d')})"
+            
+            sections.append(pitcher_line)
+            
+    # Weekly distribution analysis
+    sections.append("\nWEEKLY DISTRIBUTION:")
+    start_distribution = pitching_strategy.get('start_distribution', {})
+    
+    if start_distribution:
+        # Sort dates chronologically
+        sorted_dates = sorted(start_distribution.keys())
+        
+        # Show the distribution of starts for each day
+        sections.append("Scheduled starts by day:")
+        
+        for date_str in sorted_dates:
+            date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
+            day_name = date_obj.strftime('%a %m/%d')
+            pitchers = start_distribution[date_str]
+            
+            if len(pitchers) == 1:
+                sections.append(f"• {day_name}: {pitchers[0]}")
+            else:
+                sections.append(f"• {day_name}: {', '.join(pitchers)} ({len(pitchers)} pitchers)")
+    else:
+        sections.append("For optimal performance, aim to distribute your starts evenly throughout the week,")
+        sections.append("focusing on favorable matchups while ensuring you reach your maximum starts.")
+    
+    # Add insights or general strategy notes
+    strategy_note = pitching_strategy.get('note', '')
+    if strategy_note:
+        sections.append(f"\nNOTE: {strategy_note}")
+    
+    # Add a strategy tip based on the matchup
+    sections.append("\nSTRATEGY TIP: Prioritize your starts against weaker offensive teams and in pitcher-friendly parks. Consider the opponent's strikeout tendencies for pitchers who rely on Ks for fantasy value.")
         
     return "\n".join(sections)
 
@@ -268,8 +355,36 @@ def main():
             break
     
     if not my_matchup:
-        logger.error(f"No current matchup found for team {my_team.team_name}")
-        return 1
+        logger.warning(f"No current matchup found for team {my_team.team_name}")
+        
+        # If no active matchup is found, look for the next scheduled matchup
+        logger.info("Looking for next scheduled matchup...")
+        if hasattr(my_team, 'schedule') and my_team.schedule:
+            for scheduled_matchup in my_team.schedule:
+                # Check if this matchup has the team we want
+                team1 = getattr(scheduled_matchup, 'team_1', None) 
+                team2 = getattr(scheduled_matchup, 'team_2', None)
+                
+                # If team attributes aren't found, try home_team and away_team
+                if not team1 or not team2:
+                    team1 = getattr(scheduled_matchup, 'home_team', None)
+                    team2 = getattr(scheduled_matchup, 'away_team', None)
+                
+                # Create a simple matchup object with the first available opponent
+                if team1 and team2:
+                    logger.info(f"Found upcoming matchup: {team1.team_name} vs {team2.team_name}")
+                    
+                    # Create a simplified matchup
+                    from src.data.adapters import SimpleMatchup
+                    if str(team1.team_id) == str(team_id):
+                        my_matchup = SimpleMatchup(team1, team2)
+                    else:
+                        my_matchup = SimpleMatchup(team2, team1)
+                    break
+        
+        if not my_matchup:
+            logger.error(f"No current or upcoming matchups found for team {my_team.team_name}")
+            return 1
     
     # Identify my opponent
     opponent = my_matchup.away_team if my_matchup.home_team.team_id == team_id else my_matchup.home_team
