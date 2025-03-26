@@ -96,6 +96,96 @@ python scripts/fantasy_insights.py --projections --position-filter "SP"
 Find potential waiver wire targets:
 python scripts/fantasy_insights.py --waiver
 
+# Matchup Analysis & Reporting Features
+
+## New Features
+
+The Fantasy Baseball Analyzer now includes automated matchup analysis and reporting features:
+
+### Weekly Matchup Preview
+
+A comprehensive analysis of your upcoming matchup, including:
+
+- Position-by-position projections and advantages
+- Optimal pitcher start recommendations
+- Acquisition recommendations based on team needs
+- Overall matchup projection
+
+### Daily Updates
+
+Stay on top of your fantasy baseball team with daily updates:
+
+- Yesterday's performance summary
+- Current matchup status
+- Streaming pitcher recommendations for upcoming games
+- Hot waiver wire pickups
+
+## Getting Started
+
+1. First, identify your team ID by running:
+
+   ```
+   python scripts/find_team_id.py
+   ```
+
+2. Add your team ID to the config/settings.py file:
+
+   ```python
+   MY_TEAM_ID = 12345  # Replace with your actual team ID
+   ```
+
+3. Generate a weekly matchup preview:
+
+   ```
+   python scripts/matchup_preview.py
+   ```
+
+4. Generate a daily update report:
+   ```
+   python scripts/daily_update.py
+   ```
+
+## Customization
+
+You can customize report settings in config/settings.py:
+
+- MAX_PITCHER_STARTS: Maximum number of pitcher starts per matchup (default: 12)
+- MAX_ACQUISITIONS_PER_MATCHUP: Maximum player acquisitions per matchup (default: 8)
+
+## Automation
+
+To automate these reports:
+
+### On Windows:
+
+Use Task Scheduler to run the scripts at specific times:
+
+- Weekly preview: Run every Monday morning
+- Daily update: Run every morning at 6:00 AM
+
+### On Mac/Linux:
+
+Use cron jobs to run the scripts automatically:
+
+1. Weekly preview every Monday at 6:00 AM:
+
+   ```
+   0 6 * * 1 cd /path/to/Fantasy-Baseball-In-Season-Analytics && python scripts/matchup_preview.py
+   ```
+
+2. Daily update every day at 6:00 AM:
+   ```
+   0 6 * * * cd /path/to/Fantasy-Baseball-In-Season-Analytics && python scripts/daily_update.py
+   ```
+
+## Sharing Reports
+
+Reports are saved to the 'output' directory by default. You can:
+
+- Email reports to your co-owner (email functionality coming soon)
+- Share the output directory through Dropbox, Google Drive, etc.
+- Set up a simple web dashboard (future enhancement)
+
 ## Project Structure
 
 Fantasy-Baseball-In-Season-Analytics/
@@ -111,7 +201,6 @@ Fantasy-Baseball-In-Season-Analytics/
 
 ## Future Enhancements
 
-- Matchup analysis and predictions
 - Advanced statistical projections
 - Prospect tracking and call-up monitoring
 - Statistical indicators for breakout players
