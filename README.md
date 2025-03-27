@@ -113,6 +113,23 @@ Find trending batters only:
 python scripts/player_trends.py --player-type batter
 ```
 
+## Schedule Analysis
+
+Analyze a team's upcoming schedule (favorable/unfavorable matchups):
+```
+python scripts/schedule_analyzer.py --team NYY
+```
+
+Find pitcher streaming opportunities:
+```
+python scripts/schedule_analyzer.py --streaming
+```
+
+Find favorable hitting matchups:
+```
+python scripts/schedule_analyzer.py --streaming --hitting
+```
+
 # Matchup Analysis & Reporting Features
 
 ## New Features
@@ -127,6 +144,9 @@ A comprehensive analysis of your upcoming matchup, including:
 - Optimal pitcher start recommendations
 - Acquisition recommendations based on team needs
 - Overall matchup projection
+- Categorical strength/weakness analysis
+- Schedule advantages and disadvantages
+- Trade target recommendations
 
 ### Daily Updates
 
@@ -136,6 +156,17 @@ Stay on top of your fantasy baseball team with daily updates:
 - Current matchup status
 - Streaming pitcher recommendations for upcoming games
 - Hot waiver wire pickups
+- Player trend analysis with visualizations
+- Category performance tracking
+
+### Automated Email Reports
+
+Never miss an important fantasy baseball insight:
+
+- Daily email reports with tactical recommendations
+- Weekly strategic analysis and matchup previews
+- Beautiful HTML-formatted reports with visualizations
+- Customizable delivery schedule
 
 ## Getting Started
 
@@ -169,38 +200,94 @@ You can customize report settings in config/settings.py:
 - MAX_PITCHER_STARTS: Maximum number of pitcher starts per matchup (default: 12)
 - MAX_ACQUISITIONS_PER_MATCHUP: Maximum player acquisitions per matchup (default: 8)
 
-## Automation
+## Automated Reports
+
+Use our new automated report generator:
+
+```
+# Generate a daily report
+python scripts/automated_reports.py --daily
+
+# Generate a weekly report
+python scripts/automated_reports.py --weekly
+
+# Run the scheduled report service
+python scripts/automated_reports.py --schedule
+```
+
+### Email Configuration
+
+To enable email delivery of reports:
+
+1. Update your `.env` file with email credentials:
+   ```
+   EMAIL_USERNAME=your_email@gmail.com
+   EMAIL_PASSWORD=your_email_password_or_app_password
+   EMAIL_LIST=recipient1@example.com,recipient2@example.com
+   ```
+
+2. Update the `config/settings.py` file:
+   ```python
+   # Email notification settings
+   EMAIL_ENABLED = True
+   EMAIL_FROM = 'your_email@gmail.com'
+   EMAIL_SMTP_SERVER = 'smtp.gmail.com'  # Change for other providers
+   EMAIL_SMTP_PORT = 587
+   ```
+
+### Automation
 
 To automate these reports:
 
-### On Windows:
+#### On Windows:
 
-Use Task Scheduler to run the scripts at specific times:
+Use Task Scheduler to run the automated reports script:
 
-- Weekly preview: Run every Monday morning
-- Daily update: Run every morning at 6:00 AM
+```
+python scripts/automated_reports.py --schedule
+```
 
-### On Mac/Linux:
+#### On Mac/Linux:
 
-Use cron jobs to run the scripts automatically:
+Use a service manager like systemd or screen/tmux to keep the scheduler running:
 
-1. Weekly preview every Monday at 6:00 AM:
+```
+# Using systemd (create a service file)
+[Unit]
+Description=Fantasy Baseball Automated Reports
+After=network.target
 
-   ```
-   0 6 * * 1 cd /path/to/Fantasy-Baseball-In-Season-Analytics && python scripts/matchup_preview.py
-   ```
+[Service]
+User=yourusername
+WorkingDirectory=/path/to/Fantasy-Baseball-In-Season-Analytics
+ExecStart=/path/to/python /path/to/Fantasy-Baseball-In-Season-Analytics/scripts/automated_reports.py --schedule
+Restart=on-failure
 
-2. Daily update every day at 6:00 AM:
-   ```
-   0 6 * * * cd /path/to/Fantasy-Baseball-In-Season-Analytics && python scripts/daily_update.py
-   ```
+[Install]
+WantedBy=multi-user.target
+```
+
+Or use cron to run individual reports:
+
+```
+# Daily report at 7:00 AM
+0 7 * * * cd /path/to/Fantasy-Baseball-In-Season-Analytics && python scripts/automated_reports.py --daily
+
+# Weekly report on Mondays at 9:00 AM
+0 9 * * 1 cd /path/to/Fantasy-Baseball-In-Season-Analytics && python scripts/automated_reports.py --weekly
+```
 
 ## Sharing Reports
 
-Reports are saved to the 'output' directory by default. You can:
+Reports are saved to the 'reports' directory by default:
 
-- Email reports to your co-owner (email functionality coming soon)
-- Share the output directory through Dropbox, Google Drive, etc.
+- Daily reports: `reports/daily/`
+- Weekly reports: `reports/weekly/`
+- Report images: `reports/images/`
+
+You can:
+- Email reports automatically using the built-in delivery system
+- Share the reports directory through Dropbox, Google Drive, etc.
 - Set up a simple web dashboard (future enhancement)
 
 ## Project Structure

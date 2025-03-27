@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ report_type }} - {{ date }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #673ab7;
+            padding-bottom: 10px;
+        }
+        .header h1 {
+            color: #673ab7;
+            margin-bottom: 5px;
+        }
+        .header p {
+            color: #666;
+            font-size: 18px;
+            margin-top: 0;
+        }
+        .section {
+            margin-bottom: 40px;
+            border-left: 4px solid #673ab7;
+            padding-left: 20px;
+        }
+        .section h2 {
+            color: #673ab7;
+            margin-top: 0;
+        }
+        .section p {
+            margin: 5px 0;
+        }
+        .image-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .table-container {
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 14px;
+            color: #999;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        .emphasis {
+            font-weight: bold;
+            color: #e53935;
+        }
+        .positive {
+            color: #43a047;
+        }
+        .negative {
+            color: #e53935;
+        }
+        .neutral {
+            color: #ff9800;
+        }
+        .category-comparison {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .category-name {
+            font-weight: bold;
+            width: 15%;
+        }
+        .category-values {
+            width: 60%;
+            text-align: center;
+        }
+        .category-advantage {
+            width: 25%;
+            text-align: right;
+        }
+        .toc {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+        .toc h3 {
+            margin-top: 0;
+            color: #673ab7;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 10px;
+        }
+        .toc li {
+            margin-bottom: 8px;
+        }
+        .toc a {
+            color: #673ab7;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        @media print {
+            body {
+                max-width: 100%;
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ report_type }}</h1>
+        <p>{{ team_name }} - {{ date }}</p>
+    </div>
+    
+    <!-- Table of Contents -->
+    <div class="toc">
+        <h3>Table of Contents</h3>
+        <ul>
+            {% for section in sections %}
+            <li><a href="#section-{{ loop.index }}">{{ section.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% for section in sections %}
+    <div id="section-{{ loop.index }}" class="section">
+        <h2>{{ section.title }}</h2>
+        {% for line in section.content %}
+            {% if line %}
+                <p>{{ line | replace("• ", "<strong>• </strong>") | safe }}</p>
+            {% else %}
+                <br>
+            {% endif %}
+        {% endfor %}
+        
+        {% if section.images %}
+            <div class="image-container">
+                {% for image in section.images %}
+                    <img src="images/{{ image }}" alt="{{ section.title }} Visualization">
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        {% if section.table %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            {% for header in section.table.headers %}
+                            <th>{{ header }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in section.table.rows %}
+                        <tr>
+                            {% for cell in row %}
+                            <td>{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="footer">
+        <p>Fantasy Baseball In-Season Analytics - Weekly Report</p>
+        <p>Generated on {{ date }}</p>
+    </div>
+</body>
+</html>

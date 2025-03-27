@@ -15,13 +15,13 @@ class ReportDelivery:
     @staticmethod
     def deliver_email(subject, body, recipients, sender=None, smtp_server=None, 
                      smtp_port=None, username=None, password=None, 
-                     attachments=None, use_tls=True):
+                     attachments=None, use_tls=True, html_content=None):
         """
         Send a report via email.
         
         Args:
             subject: Email subject
-            body: Email body content
+            body: Email body content (plain text)
             recipients: List of recipient email addresses
             sender: Sender email address (optional)
             smtp_server: SMTP server address (optional)
@@ -30,6 +30,7 @@ class ReportDelivery:
             password: SMTP authentication password (optional)
             attachments: List of file paths to attach (optional)
             use_tls: Whether to use TLS encryption (default: True)
+            html_content: HTML version of the email (optional)
             
         Returns:
             bool: True if email was sent successfully, False otherwise
@@ -56,24 +57,41 @@ class ReportDelivery:
         
         try:
             # Create message
-            msg = MIMEMultipart()
+            msg = MIMEMultipart('alternative')
             msg['From'] = sender
             msg['To'] = ', '.join(recipients)
             msg['Subject'] = subject
             
-            # Add body
+            # Add plain text body
             msg.attach(MIMEText(body, 'plain'))
             
-            # Add attachments
+            # Add HTML body if provided
+            if html_content:
+                msg.attach(MIMEText(html_content, 'html'))
+            
+            # If there are attachments, convert to mixed multipart
             if attachments:
+                # Create a new mixed message
+                mixed_msg = MIMEMultipart('mixed')
+                # Copy the headers
+                for key, value in msg.items():
+                    mixed_msg[key] = value
+                
+                # Attach the alternative part (plain text and HTML)
+                mixed_msg.attach(msg)
+                
+                # Add attachments
                 for file_path in attachments:
                     if os.path.exists(file_path):
                         with open(file_path, 'rb') as file:
                             part = MIMEApplication(file.read(), Name=os.path.basename(file_path))
                             part['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
-                            msg.attach(part)
+                            mixed_msg.attach(part)
                     else:
                         logger.warning(f"Attachment not found: {file_path}")
+                
+                # Replace the message with the mixed multipart
+                msg = mixed_msg
             
             # Connect to server and send
             server = smtplib.SMTP(smtp_server, smtp_port)
